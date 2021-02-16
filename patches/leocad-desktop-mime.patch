@@ -1,0 +1,13 @@
+diff --git a/qt/leocad.desktop b/qt/leocad.desktop
+index 3c2f14e..05ed69d 100644
+--- a/qt/leocad.desktop
++++ b/qt/leocad.desktop
+@@ -11,7 +11,7 @@ Exec=leocad %f
+ Terminal=false
+ Type=Application
+ Icon=leocad
+-MimeType=application/vnd.leocad;application/x-ldraw;application/x-multi-part-ldraw;application/x-ldlite;
++MimeType=application/vnd.leocad;application/x-ldraw;application/x-multi-part-ldraw;application/x-ldlite;application/x-multipart-ldraw;
+ Categories=Graphics;3DGraphics;Education;
+ Keywords=CAD;LEGO;LDraw;
+ 

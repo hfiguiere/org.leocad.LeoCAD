@@ -96,7 +96,15 @@
                 },
                 {
                     "type": "patch",
+                    "path": "patches/leocad-issue-614.patch"
+                },
+                {
+                    "type": "patch",
                     "path": "patches/leocad-povray-path.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/leocad-desktop-mime.patch"
                 },
                 {
                     "type": "archive",

@@ -1,0 +1,65 @@
+From 48ae9dae175ca29dbaba19cfdf70beddf198395e Mon Sep 17 00:00:00 2001
+From: Leonardo Zide <leozide@gmail.com>
+Date: Sat, 30 Jan 2021 10:17:15 -0800
+Subject: [PATCH] Fixed pieces not sorted correctly when changing their step.
+ Fixes #614.
+
+---
+ common/lc_model.cpp | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
+
+diff --git a/common/lc_model.cpp b/common/lc_model.cpp
+index b87dec8b..50e860a1 100644
+--- a/common/lc_model.cpp
++++ b/common/lc_model.cpp
+@@ -2861,11 +2861,13 @@ void lcModel::SetSelectedPiecesPieceInfo(PieceInfo* Info)
+ 
+ void lcModel::SetSelectedPiecesStepShow(lcStep Step)
+ {
+-	bool Modified = false;
++	lcArray<lcPiece*> MovedPieces;
+ 	bool SelectionChanged = false;
+ 
+-	for (lcPiece* Piece : mPieces)
++	for (int PieceIdx = 0; PieceIdx < mPieces.GetSize(); )
+ 	{
++		lcPiece* Piece = mPieces[PieceIdx];
++
+ 		if (Piece->IsSelected() && Piece->GetStepShow() != Step)
+ 		{
+ 			Piece->SetStepShow(Step);
+@@ -2876,17 +2878,28 @@ void lcModel::SetSelectedPiecesStepShow(lcStep Step)
+ 				SelectionChanged = true;
+ 			}
+ 
+-			Modified = true;
++			MovedPieces.Add(Piece);
++			mPieces.RemoveIndex(PieceIdx);
++			continue;
+ 		}
++
++		PieceIdx++;
+ 	}
+ 
+-	if (Modified)
++	if (MovedPieces.IsEmpty())
++		return;
++
++	for (int PieceIdx = 0; PieceIdx < MovedPieces.GetSize(); PieceIdx++)
+ 	{
+-		SaveCheckpoint(tr("Showing Pieces"));
+-		UpdateAllViews();
+-		gMainWindow->UpdateTimeline(false, false);
+-		gMainWindow->UpdateSelectedObjects(SelectionChanged);
++		lcPiece* Piece = MovedPieces[PieceIdx];
++		Piece->SetFileLine(-1);
++		AddPiece(Piece);
+ 	}
++
++	SaveCheckpoint(tr("Showing Pieces"));
++	UpdateAllViews();
++	gMainWindow->UpdateTimeline(false, false);
++	gMainWindow->UpdateSelectedObjects(SelectionChanged);
+ }
+ 
+ void lcModel::SetSelectedPiecesStepHide(lcStep Step)
